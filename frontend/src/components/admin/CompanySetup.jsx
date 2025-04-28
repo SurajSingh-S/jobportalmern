@@ -8,6 +8,10 @@ import { COMPANY_API_END_POINT } from '@/utils/constant'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import useGetCompanyById from '@/hooks/useGetCompanyById'
+import { Loader2 } from 'lucide-react'
 
 const CompanySetup = () => {
 
@@ -19,9 +23,14 @@ const CompanySetup = () => {
     file: null
   })
 
-  const params = useParams()
+
+
+  const params = useParams();
+  useGetCompanyById(params.id);
 
   const navigate = useNavigate();
+
+  const { singleCompany } = useSelector(store => store.company)
 
   const [loading, setLoading] = useState(false);
 
@@ -50,8 +59,8 @@ const CompanySetup = () => {
 
     try {
       setLoading(true)
-      const res = await axios.put(`${COMPANY_API_END_POINT}/update/${useParams.id}`, formData, {
-        headres: {
+      const res = await axios.put(`${COMPANY_API_END_POINT}/update/${params.id}`, formData, {
+        headers: {
           'Content-Type': 'multipart/form-data'
         },
         withCredentials: true
@@ -72,13 +81,24 @@ const CompanySetup = () => {
   }
 
 
+  useEffect(() => {
+    setInput({
+      name: singleCompany.name || "",
+      description: singleCompany.description || "",
+      website: singleCompany.website || "",
+      location: singleCompany.location || "",
+      file: singleCompany.file || null
+    })
+  }, [singleCompany]);
+
+
   return (
     <div>
       <Navbar />
       <div className='max-w-xl mx-auto my-10'>
         <form onSubmit={submitHandler}>
           <div className='flex items-center gap-5 p-8'>
-            <Button onClick= {()=> navigate("/admin/companies")} className={`flex items-center gap-2 text-gray-900 font-semibold`} variant="outline">
+            <Button onClick={() => navigate("/admin/companies")} className={`flex items-center gap-2 text-gray-900 font-semibold`} variant="outline">
               <ArrowLeft />
               <span>Back</span>
             </Button>
@@ -93,7 +113,7 @@ const CompanySetup = () => {
                 type="text"
                 placeholder=""
                 name="name"
-                value={input.value}
+                value={input.name}
                 onChange={changeEventHandler}
               />
             </div>

@@ -1,10 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableCaption, TableHead, TableHeader, TableRow } from '../ui/table'
 import { Avatar, AvatarImage } from '../ui/avatar'
 import { Popover, PopoverTrigger } from '../ui/popover'
 import { PopoverContent } from '@radix-ui/react-popover'
 import { Edit2, MoreHorizontal } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 const CompaniesTable = () => {
+    const { companies,searchCompanyByText } = useSelector(store => store.company);
+    const [filteredCompanies,setFilterCompany]= useState(companies);
+const navigate= useNavigate();
+    useEffect(()=>{
+        const filteredCompany= companies.length>= 0 && companies.filter((company)=>{
+            if(!searchCompanyByText){
+                return true;
+            };
+            return company?.name?.toLowerCase().includes(searchCompanyByText.toLowerCase())
+        })
+        setFilterCompany(filteredCompany)
+    },[companies,searchCompanyByText])
     return (
         <div>
             <Table>
@@ -20,25 +34,44 @@ const CompaniesTable = () => {
                 </TableHeader>
 
                 <TableBody>
-                    <TableCell>
-                        <Avatar>
-                            <AvatarImage src="https://licensinginternational.org/wp-content/uploads/2020/05/redeye.png" />
-                        </Avatar>
-                    </TableCell>
+                    {
+                        // companies.length <= 0 ? <span>You haven't registered for any company yet</span> : (
 
-                    <TableCell>Company Name</TableCell>
-                    <TableCell>18-April-2025</TableCell>
-                    <TableCell className="text-right cursor-pointer">
-                        <Popover>
-                            <PopoverTrigger><MoreHorizontal/></PopoverTrigger>
-                            <PopoverContent className='w-32'>
-                                <div className='flex items-center gap-2 w-fit cursor-pointer'>
-                                    <Edit2 className='w-4'/>
-                                    <span>Edit</span>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    </TableCell>
+
+
+                        filteredCompanies?.map((company) => (
+                            <tr>
+                                <TableCell>
+                                    <Avatar>
+                                        {/* <AvatarImage src="https://licensinginternational.org/wp-content/uploads/2020/05/redeye.png" /> */}
+                                        <AvatarImage src={company.logo || "https://via.placeholder.com/40"} alt={`${company.name} Logo`} />
+
+                                    </Avatar>
+                                </TableCell>
+
+                                <TableCell>{company.name}</TableCell>
+                                <TableCell>{company.createdAt.split ("T")[0]}</TableCell>
+                                <TableCell className="text-right cursor-pointer">
+                                    <Popover>
+                                        <PopoverTrigger><MoreHorizontal /></PopoverTrigger>
+                                        <PopoverContent className='w-32'>
+                                            <div onClick={()=>navigate(`/admin/companies/${company._id}`)} className='flex items-center gap-2 w-fit cursor-pointer'>
+                                                <Edit2 className='w-4' />
+                                                <span>Edit</span>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                </TableCell>
+                            </tr>
+                        ))
+
+
+                    }
+
+
+
+
+
 
                 </TableBody>
             </Table>

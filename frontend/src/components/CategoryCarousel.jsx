@@ -21,7 +21,7 @@ const CategoryCarousel = () => {
         navigate("/browse");
     }
 
-    return (
+   return (
         <div>
             <Carousel className="w-full max-w-xl mx-auto my-20">
                 <CarouselContent>
@@ -38,6 +38,8 @@ const CategoryCarousel = () => {
             </Carousel>
         </div>
     )
+
+    
 }
 
 export default CategoryCarousel
