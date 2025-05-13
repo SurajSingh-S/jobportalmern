@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
  import useGetAllJobs from '@/hooks/useGetAllJobs';
 
-// const randomJobs = [1, 2,45];
+// const randomJobs = [1, 2,4,5];
 
 const Browse = () => {
     useGetAllJobs();
@@ -16,6 +16,7 @@ const Browse = () => {
             dispatch(setSearchedQuery(""));
         }
     },[])
+    
     return (
         <div>
             <Navbar />
