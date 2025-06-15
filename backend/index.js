@@ -13,7 +13,7 @@ dotenv.config({});
 
 const app = express();
 
-const dirname=path.resolve();
+const _dirname=path.resolve();
 
 
 // middleware
@@ -37,7 +37,10 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 
 
-app.use(express.static(path.join(dirname,"/frontend/dist"))) 
+app.use(express.static(path.join(_dirname,"/frontend/dist"))) 
+app.get('*'),(_,res)=>{
+    res.sendFile(path.resolve(_dirname,"frontend", "dist","index.html"))
+};
 
 app.listen(PORT,()=>{
     connectDB();
